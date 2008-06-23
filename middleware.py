@@ -6,6 +6,7 @@ import logging
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
 
+
 class CanonicalMiddleware:
     def process_view(self, request, view_func, view_args, view_kwargs):
         """
