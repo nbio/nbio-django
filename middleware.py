@@ -3,8 +3,11 @@ __copyright__ = "Copyright 2008 PASV"
 __author__ = "Randy Reddig - ydnar@shaderlab.com"
 
 import logging
+import re
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
+
+RE_MATCH_END_SLASH = re.compile('/*$')
 
 
 class CanonicalMiddleware:
@@ -39,10 +42,15 @@ class CanonicalMiddleware:
                 redirect = True
             del view_kwargs['port']
         
-        path = request.path
-        if not path.endswith('/'):
-            path = path + '/'
+        path = RE_MATCH_END_SLASH.sub('/', request.path)
+        if path != request.path:
             redirect = True
+        
+        if 'path' in view_kwargs:
+            if path != view_kwargs['path']:
+                path = view_kwargs['path']
+                redirect = True
+            del view_kwargs['path']
         
         query_string = request.META['QUERY_STRING']
             
