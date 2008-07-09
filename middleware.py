@@ -7,7 +7,7 @@ import re
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
 
-RE_MATCH_END_SLASH = re.compile('/*$')
+RE_MATCH_SLASHES = re.compile('/+|/*$')
 
 
 class CanonicalMiddleware:
