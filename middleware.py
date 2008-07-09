@@ -42,7 +42,7 @@ class CanonicalMiddleware:
                 redirect = True
             del view_kwargs['port']
         
-        path = RE_MATCH_END_SLASH.sub('/', request.path)
+        path = RE_MATCH_SLASHES.sub('/', request.path)
         if path != request.path:
             redirect = True
         
