@@ -1,11 +1,13 @@
-__license__ = "Python"
-__copyright__ = "Copyright 2008 PASV"
-__author__ = "Randy Reddig - ydnar@shaderlab.com"
+__license__ = "Apache 2.0"
+__copyright__ = "Copyright 2008 NBIO"
+__author__ = "Randy Reddig - ydnar@nb.io"
+
 
 import logging
 import re
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
+
 
 RE_MATCH_SLASHES = re.compile('/+|/*$')
 
