@@ -59,13 +59,15 @@ class CanonicalMiddleware:
         if redirect:
             return self._redirect(request, is_secure, host, port, path, query_string)
     
+    
     def _resolves(self, url):
         try:
             resolve(url)
             return True
         except http.Http404:
             return False
-
+            
+    
     def _redirect(self, request, is_secure, host, port, path, query_string):
         protocol = is_secure and 'http' or 'https'
         if port == '80' or not port:
