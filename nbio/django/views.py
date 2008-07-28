@@ -19,7 +19,10 @@ def null():
 
 
 def default(request, **kwargs):
-    template_name = 'pages/' + RE_MATCH_END_SLASH.sub('', request.path) + '.html'
+    if 'template' in kwargs:
+        template_name = kwargs['template']
+    else:
+        template_name = 'pages/' + RE_MATCH_END_SLASH.sub('', request.path) + '.html'
     try:
         django.template.loader.get_template(template_name)
         return render_to_response(template_name, {}, context_instance=RequestContext(request))
