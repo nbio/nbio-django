@@ -1,5 +1,5 @@
 __license__ = "Apache 2.0"
-__copyright__ = "Copyright 2008 NbIO"
+__copyright__ = "Copyright 2008 nb.io"
 __author__ = "Randy Reddig - ydnar@nb.io"
 
 
