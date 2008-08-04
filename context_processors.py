@@ -7,16 +7,16 @@ import django.conf
 import datetime
 
 
-counter = 0
+request_counter = 0
 def increment():
-    global counter
-    counter += 1
-    return counter
+    global request_counter
+    request_counter += 1
+    return request_counter
 
 
 def settings(request):
     return {
         'now': datetime.datetime.now(),
         'settings': django.conf.settings,
-        'counter': increment()
+        'request_counter': increment()
     }
