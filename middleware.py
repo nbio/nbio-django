@@ -6,10 +6,15 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 import logging
 import re
 from django.conf import settings
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponsePermanentRedirect, Http404
+from django.core.urlresolvers import resolve
+from django.template import loader
 
 
-RE_MATCH_SLASHES = re.compile('/+|/*$')
+TEMPLATE_DIRECTORY = 'pages'
+INDEX_TEMPLATE = '__index__.html'
+RE_MATCH_SLASHES = re.compile(r'/+')
+RE_MATCH_END_SLASH = re.compile(r'(?<=.)/$')
 
 
 class CanonicalMiddleware:
@@ -44,28 +49,45 @@ class CanonicalMiddleware:
                 redirect = True
             del view_kwargs['port']
         
+        # clean up path
         path = RE_MATCH_SLASHES.sub('/', request.path)
-        if path != request.path:
-            redirect = True
         
+        # redirect to specific path
         if 'path' in view_kwargs:
             if path != view_kwargs['path']:
                 path = view_kwargs['path']
-                redirect = True
             del view_kwargs['path']
+        
+        # auto view
+        else:
+            try:
+                view_kwargs['template'] = loader.get_template(TEMPLATE_DIRECTORY + '/' + path)
+            except:
+                try:
+                    view_kwargs['template'] = loader.get_template(TEMPLATE_DIRECTORY + '/' + path + '/' + INDEX_TEMPLATE)
+                    if not path.endswith('/'):
+                        path += '/'
+                except:
+                    if not path.endswith('/'):
+                        if view_func == self._get_view_func(path + '/'):
+                            path += '/'
+        
+        # redirect if path has changed
+        if path != request.path:
+            redirect = True
         
         query_string = request.META['QUERY_STRING']
             
         if redirect:
             return self._redirect(request, is_secure, host, port, path, query_string)
     
-    
-    def _resolves(self, url):
+        
+    def _get_view_func(self, path):
         try:
-            resolve(url)
-            return True
-        except http.Http404:
-            return False
+            (view_func, view_args, view_kwargs) = resolve(path)
+            return view_func
+        except Http404:
+            return None
             
     
     def _redirect(self, request, is_secure, host, port, path, query_string):
