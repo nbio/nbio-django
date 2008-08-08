@@ -5,18 +5,12 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 
 import django.conf
 import datetime
-
-
-request_counter = 0
-def increment():
-    global request_counter
-    request_counter += 1
-    return request_counter
+import nbio.django.middleware
 
 
 def settings(request):
     return {
         'now': datetime.datetime.now(),
         'settings': django.conf.settings,
-        'request_counter': increment()
+        'request_counter': nbio.django.middleware.request_counter
     }

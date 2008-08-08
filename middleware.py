@@ -11,11 +11,21 @@ from django.core.urlresolvers import resolve
 from django.template import loader
 
 
-TEMPLATE_DIRECTORY = 'pages'
+
+TEMPLATE_PATH = 'auto'
 INDEX_TEMPLATE = '__index__.html'
 RE_MATCH_SLASHES = re.compile(r'/+')
 RE_MATCH_END_SLASH = re.compile(r'(?<=.)/$')
 
+
+request_counter = 0
+def increment():
+    global request_counter
+    request_counter += 1
+    return request_counter
+
+import sys
+sys.stderr.write("initializing middleware.py %d\n" % request_counter)
 
 class CanonicalMiddleware:
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -26,6 +36,9 @@ class CanonicalMiddleware:
         port number
         add trailing slash (if required)
         """
+        increment()
+        sys.stderr.write("request_counter = %d\n" % request_counter)
+        
         redirect = False
         
         is_secure = bool(request.is_secure)
@@ -61,10 +74,10 @@ class CanonicalMiddleware:
         # auto view
         else:
             try:
-                view_kwargs['template'] = loader.get_template(TEMPLATE_DIRECTORY + '/' + path)
+                view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path)
             except:
                 try:
-                    view_kwargs['template'] = loader.get_template(TEMPLATE_DIRECTORY + '/' + path + '/' + INDEX_TEMPLATE)
+                    view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + '/' + INDEX_TEMPLATE)
                     if not path.endswith('/'):
                         path += '/'
                 except:
