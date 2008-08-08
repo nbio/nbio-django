@@ -24,8 +24,6 @@ def increment():
     request_counter += 1
     return request_counter
 
-import sys
-sys.stderr.write("initializing middleware.py %d\n" % request_counter)
 
 class CanonicalMiddleware:
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -37,7 +35,9 @@ class CanonicalMiddleware:
         add trailing slash (if required)
         """
         increment()
-        sys.stderr.write("request_counter = %d\n" % request_counter)
+        
+        if 'location' in view_kwargs:
+            return HttpResponsePermanentRedirect(view_kwargs['location'])
         
         redirect = False
         
