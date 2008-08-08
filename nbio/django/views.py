@@ -25,6 +25,3 @@ def auto(request, **kwargs):
         return HttpResponse(t.render(c), DEFAULT_CONTENT_TYPE)
     except:
         raise Http404
-
-
-default = auto
