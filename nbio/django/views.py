@@ -19,9 +19,8 @@ def null():
 
 
 def auto(request, **kwargs):
-    try:
-        t = kwargs['template']
-        c = RequestContext(request)
-        return HttpResponse(t.render(c), DEFAULT_CONTENT_TYPE)
-    except:
+    t = kwargs['template']
+    if not t:
         raise Http404
+    c = RequestContext(request)
+    return HttpResponse(t.render(c), DEFAULT_CONTENT_TYPE)
