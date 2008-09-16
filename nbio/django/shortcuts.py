@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.template import loader
 
 
-DEFAULT_CONTENT_TYPE = 'text/html'
+DEFAULT_CONTENT_TYPE = 'text/html;charset=UTF-8'
 
 
 def render_response(request, template, dictionary=None, content_type=DEFAULT_CONTENT_TYPE):
