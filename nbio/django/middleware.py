@@ -11,7 +11,6 @@ from django.core.urlresolvers import resolve
 from django.template import loader
 
 
-
 TEMPLATE_PATH = 'auto'
 INDEX_TEMPLATE = '__index__.html'
 RE_MATCH_SLASHES = re.compile(r'/+')
@@ -109,7 +108,10 @@ class CanonicalMiddleware:
             port = ''
         else:
             port = ':' + port
-        url = "%s://%s%s%s%s" % (protocol, host, port, path, query_string)
+        if query_string:
+            url = "%s://%s%s%s?%s" % (protocol, host, port, path, query_string)
+        else:
+            url = "%s://%s%s%s" % (protocol, host, port, path)
         if settings.DEBUG and request.method == 'POST':
             raise RuntimeError, 'POST requests cannot be redirected.'
         return HttpResponsePermanentRedirect(url)
