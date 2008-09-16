@@ -3,12 +3,8 @@ __copyright__ = "Copyright 2008 nb.io"
 __author__ = "Randy Reddig - ydnar@nb.io"
 
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response
-from django.http import HttpResponse, Http404
-from django.template import loader
-import os.path
-import re
+from nbio.django.shortcuts import render_response
+from django.http import Http404
 
 
 DEFAULT_CONTENT_TYPE = 'text/html'
@@ -16,12 +12,12 @@ DEFAULT_CONTENT_TYPE = 'text/html'
 
 def null():
     return
-
+    
 
 def auto(request, **kwargs):
     try:
         t = kwargs['template']
     except:
         raise Http404
-    c = RequestContext(request)
-    return HttpResponse(t.render(c), DEFAULT_CONTENT_TYPE)
+    return render_response(t)
+
