@@ -19,5 +19,5 @@ def auto(request, **kwargs):
         t = kwargs['template']
     except:
         raise Http404
-    return render_response(t)
+    return render_response(request, t)
 
