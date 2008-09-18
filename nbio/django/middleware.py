@@ -13,8 +13,9 @@ from django.template import loader
 
 TEMPLATE_PATH = 'auto'
 INDEX_TEMPLATE = '__index__.html'
-RE_MATCH_SLASHES = re.compile(r'/+')
-RE_MATCH_END_SLASH = re.compile(r'(?<=.)/$')
+RE_SLASHES = re.compile(r'/+')
+RE_START_SLASH = re.compile(r'^/+')
+RE_END_SLASH = re.compile(r'(?<=.)/$')
 
 
 request_counter = 0
@@ -62,7 +63,10 @@ class CanonicalMiddleware:
             del view_kwargs['port']
         
         # clean up path
-        path = RE_MATCH_SLASHES.sub('/', request.path)
+        path = RE_SLASHES.sub('/', request.path)
+        #path = RE_START_SLASH.sub('/', path)
+        #logging.warn("request.path: %s" % request.path)
+        #logging.warn("path: %s" % path)
         
         # redirect to specific path
         if 'path' in view_kwargs:
