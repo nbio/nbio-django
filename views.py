@@ -17,7 +17,7 @@ def null():
 def auto(request, **kwargs):
     try:
         t = kwargs['template']
-    except:
+    except KeyError:
         raise Http404
     return render_response(request, t)
 
