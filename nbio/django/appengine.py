@@ -10,7 +10,6 @@ from django.http import HttpResponseForbidden
 from google.appengine.api import users
 
 
-
 class AuthMiddleware:
     def process_request(self, request):
         """
