@@ -107,15 +107,15 @@ class CanonicalMiddleware:
             
     
     def _redirect(self, request, is_secure, host, port, path, query_string):
-        protocol = is_secure and 'http' or 'https'
+        scheme = is_secure and 'http' or 'https'
         if port == '80' or not port:
             port = ''
         else:
             port = ':' + port
         if query_string:
-            url = "%s://%s%s%s?%s" % (protocol, host, port, path, query_string)
+            url = "%s://%s%s%s?%s" % (scheme, host, port, path, query_string)
         else:
-            url = "%s://%s%s%s" % (protocol, host, port, path)
+            url = "%s://%s%s%s" % (scheme, host, port, path)
         if settings.DEBUG and request.method == 'POST':
             raise RuntimeError, 'POST requests cannot be redirected.'
         return HttpResponsePermanentRedirect(url)
