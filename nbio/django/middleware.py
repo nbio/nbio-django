@@ -9,6 +9,7 @@ from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, Http404
 from django.core.urlresolvers import resolve
 from django.template import loader
+from nbio.django.shortcuts import build_url
 
 
 TEMPLATE_PATH = 'auto'
@@ -41,7 +42,7 @@ class CanonicalMiddleware:
         
         redirect = False
         
-        is_secure = bool(request.is_secure)
+        is_secure = request.is_secure()
         if 'secure' in view_kwargs:
             if is_secure != bool(view_kwargs['secure']):
                 is_secure = not is_secure
@@ -95,7 +96,11 @@ class CanonicalMiddleware:
         query_string = request.META['QUERY_STRING']
             
         if redirect:
-            return self._redirect(request, is_secure, host, port, path, query_string)
+            url = build_url(request, is_secure, host, port, path, query_string)
+            logging.warn(url)
+            if settings.DEBUG and request.method == 'POST':
+                raise RuntimeError, 'POST requests cannot be redirected.'
+            return HttpResponsePermanentRedirect(url)
     
         
     def _get_view_func(self, path):
@@ -104,18 +109,3 @@ class CanonicalMiddleware:
             return view_func
         except Http404:
             return None
-            
-    
-    def _redirect(self, request, is_secure, host, port, path, query_string):
-        scheme = is_secure and 'http' or 'https'
-        if port == '80' or not port:
-            port = ''
-        else:
-            port = ':' + port
-        if query_string:
-            url = "%s://%s%s%s?%s" % (scheme, host, port, path, query_string)
-        else:
-            url = "%s://%s%s%s" % (scheme, host, port, path)
-        if settings.DEBUG and request.method == 'POST':
-            raise RuntimeError, 'POST requests cannot be redirected.'
-        return HttpResponsePermanentRedirect(url)
