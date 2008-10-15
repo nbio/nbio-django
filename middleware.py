@@ -97,7 +97,6 @@ class CanonicalMiddleware:
             
         if redirect:
             url = build_url(request, is_secure, host, port, path, query_string)
-            logging.warn(url)
             if settings.DEBUG and request.method == 'POST':
                 raise RuntimeError, 'POST requests cannot be redirected.'
             return HttpResponsePermanentRedirect(url)
