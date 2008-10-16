@@ -4,7 +4,6 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 
 
 import logging
-import re
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from google.appengine.api import users
