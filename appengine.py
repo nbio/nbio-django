@@ -14,7 +14,9 @@ class AuthMiddleware:
         """
         Process the request, and attempt to authenticate using Google's App Engine user API
         """
-        email = users.get_current_user().email()
-        if email not in settings.ALLOWED_USERS:
-            return HttpResponseForbidden("User %s does not have permission to view this page." % email)
+        user = users.get_current_user()
+        if user:
+            email = users.get_current_user().email()
+            if email not in settings.ALLOWED_USERS:
+                return HttpResponseForbidden("User %s does not have permission to view this page." % email)
         return None
