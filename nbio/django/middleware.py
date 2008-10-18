@@ -8,7 +8,7 @@ import re
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, Http404
 from django.core.urlresolvers import resolve
-from django.template import loader
+from django.template import loader, TemplateDoesNotExist
 from nbio.django.shortcuts import build_url
 
 
@@ -65,9 +65,6 @@ class CanonicalMiddleware:
         
         # clean up path
         path = RE_SLASHES.sub('/', request.path)
-        #path = RE_START_SLASH.sub('/', path)
-        #logging.warn("request.path: %s" % request.path)
-        #logging.warn("path: %s" % path)
         
         # redirect to specific path
         if 'path' in view_kwargs:
@@ -79,16 +76,16 @@ class CanonicalMiddleware:
         else:
             try:
                 view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path)
-            except:
+            except TemplateDoesNotExist:
                 try:
                     view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + '/' + INDEX_TEMPLATE)
                     if not path.endswith('/'):
                         path += '/'
-                except:
+                except TemplateDoesNotExist:
                     if not path.endswith('/'):
                         if view_func == self._get_view_func(path + '/'):
                             path += '/'
-        
+                
         # redirect if path has changed
         if path != request.path:
             redirect = True
