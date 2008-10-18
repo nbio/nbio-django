@@ -19,7 +19,7 @@ def render_response(request, template, dictionary=None, content_type=DEFAULT_CON
 
 
 def build_url(request, is_secure=None, host=None, port=None, path=None, query_string=None):
-        if is_secure == None:
+        if is_secure is None:
             is_secure = request.is_secure()
         host = host or request.META['SERVER_NAME']
         port = port or request.META['SERVER_PORT']
