@@ -11,11 +11,15 @@ from django.template import loader
 DEFAULT_CONTENT_TYPE = 'text/html;charset=UTF-8'
 
 
-def render_response(request, template, dictionary=None, content_type=DEFAULT_CONTENT_TYPE, response_class=HttpResponse):
-    if template.__class__ == str:
+def render_template(request, template, dictionary=None):
+    if template.__class__ == str or template.__class__ == unicode:
         template = loader.get_template(template)
-    c = RequestContext(request, dictionary)
-    return response_class(template.render(c), content_type)
+    context = RequestContext(request, dictionary)
+    return template.render(context)
+    
+
+def render_response(request, template, dictionary=None, content_type=DEFAULT_CONTENT_TYPE, response_class=HttpResponse):
+    return response_class(render_template(request, template, dictionary), content_type)
 
 
 def build_url(request, is_secure=None, host=None, port=None, path=None, query_string=None):
