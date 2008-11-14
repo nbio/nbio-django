@@ -3,9 +3,8 @@ __copyright__ = "Copyright 2008 nb.io"
 __author__ = "Randy Reddig - ydnar@nb.io"
 
 
-from django.template import RequestContext
+from django.template import loader, RequestContext
 from django.http import HttpResponse
-from django.template import loader
 
 
 DEFAULT_CONTENT_TYPE = 'text/html;charset=UTF-8'
