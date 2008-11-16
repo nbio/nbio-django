@@ -5,6 +5,7 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 
 import urllib
 from django.utils.encoding import smart_str
+from django.core.urlresolvers import reverse
 
 
 def iri_to_uri(iri):
@@ -27,3 +28,10 @@ def iri_to_uri(iri):
     if iri is None:
         return iri
     return urllib.quote(smart_str(iri), safe='/#%[]=:;$&()+,!?*@')
+
+
+def reverse_slash(viewname, urlconf=None, args=None, kwargs=None, prefix=None):
+    url = reverse(viewname, urlconf=urlconf, args=args, kwargs=kwargs, prefix=prefix)
+    if not url.endswith('/'):
+        url = url + '/'
+    return url
