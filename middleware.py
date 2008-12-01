@@ -5,6 +5,8 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 
 import logging
 import re
+from time import sleep
+from random import randint
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, Http404
 from django.core.urlresolvers import resolve
@@ -36,6 +38,9 @@ class CanonicalMiddleware:
         add trailing slash (if required)
         """
         increment()
+        
+        # test slow ajax
+        #sleep(randint(0, 4))
         
         if 'location' in view_kwargs:
             return HttpResponsePermanentRedirect(view_kwargs['location'])
