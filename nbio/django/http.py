@@ -5,7 +5,6 @@ __author__ = "Randy Reddig - ydnar@nb.io"
 
 from django.http import HttpResponse
 from django.utils import simplejson
-from nbio.csshttprequest import encode
 
 
 JSON_CONTENT_TYPE = "application/javascript+json"
@@ -19,6 +18,7 @@ class JSONHttpResponse(HttpResponse):
 
 class CSSHttpResponse(HttpResponse):
     def __init__(self, content):
+        from nbio.csshttprequest import encode
         super(CSSHttpResponse, self).__init__(encode(content), CSS_CONTENT_TYPE)
 
 
