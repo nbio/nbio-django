@@ -57,8 +57,15 @@ class CanonicalMiddleware:
         host = request.META['SERVER_NAME']
         if 'host' in view_kwargs:
             if host != view_kwargs['host']:
-                host = view_kwargs['host']
-                redirect = True
+                change = True
+                if hasattr(settings, 'HOST_FILTERS'):
+                    for filter in settings.HOST_FILTERS:
+                        if filter.search(host):
+                            change = False
+                            break
+                if change:
+                    host = view_kwargs['host']
+                    redirect = True
             del view_kwargs['host']
         
         port = request.META['SERVER_PORT']
@@ -99,8 +106,6 @@ class CanonicalMiddleware:
             
         if redirect:
             url = build_url(request, is_secure, host, port, path, query_string)
-            if settings.DEBUG and request.method == 'POST':
-                raise RuntimeError, 'POST requests cannot be redirected.'
             return HttpResponsePermanentRedirect(url)
     
         

@@ -16,8 +16,12 @@ class UrlNode(Node):
             self.path = '/' + self.path
 
     def render(self, context):
+        host = self.host
         request = context.get('request')
-        return build_url(request, host=self.host, path=self.path)
+        if request:
+            host = host or request.META['SERVER_NAME']
+        host = host or settings.HOSTS['app']
+        return build_url(request, host=host, path=self.path)
 
 
 def static_url(parser, token):
