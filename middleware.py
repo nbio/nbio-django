@@ -3,6 +3,7 @@ __copyright__ = "Copyright 2008 nb.io"
 __author__ = "Randy Reddig - ydnar@nb.io"
 
 
+import sys
 import logging
 import re
 from time import sleep
@@ -14,8 +15,8 @@ from django.template import loader, TemplateDoesNotExist
 from nbio.django.shortcuts import build_url
 
 
-TEMPLATE_PATH = 'auto'
-INDEX_TEMPLATE = '__index__.html'
+TEMPLATE_PATH = u'auto'
+INDEX_TEMPLATE = u'__index__.html'
 RE_SLASHES = re.compile(r'/+')
 RE_START_SLASH = re.compile(r'^/+')
 RE_END_SLASH = re.compile(r'(?<=.)/$')
@@ -77,7 +78,7 @@ class CanonicalMiddleware:
             del view_kwargs['port']
         
         # clean up path
-        path = RE_SLASHES.sub('/', request.path)
+        path = RE_SLASHES.sub(u'/', unicode(request.path))
         
         # redirect to specific path
         if 'path' in view_kwargs:
@@ -89,22 +90,22 @@ class CanonicalMiddleware:
         else:
             try:
                 view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path)
-            except TemplateDoesNotExist:
+            except (TemplateDoesNotExist, UnicodeError):
                 try:
-                    view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + '/' + INDEX_TEMPLATE)
-                    if not path.endswith('/'):
+                    view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + u'/' + INDEX_TEMPLATE)
+                    if not path.endswith(u'/'):
                         path += '/'
-                except TemplateDoesNotExist:
-                    if not path.endswith('/'):
-                        if view_func == self._get_view_func(path + '/'):
-                            path += '/'
-                
+                except (TemplateDoesNotExist, UnicodeError):
+                    if not path.endswith(u'/'):
+                        if view_func == self._get_view_func(path + u'/'):
+                            path += u'/'
+        
         # redirect if path has changed
         if path != request.path:
             redirect = True
         
         query_string = request.META['QUERY_STRING']
-            
+        
         if redirect:
             url = build_url(request, is_secure, host, port, path, query_string)
             return HttpResponsePermanentRedirect(url)
