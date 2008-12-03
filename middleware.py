@@ -62,6 +62,7 @@ class CanonicalMiddleware:
                     for filter in settings.HOST_FILTERS:
                         if filter.search(host):
                             change = False
+                            request.META['X_OVERRIDE_SERVER_NAME'] = host
                             break
                 if change:
                     host = view_kwargs['host']
