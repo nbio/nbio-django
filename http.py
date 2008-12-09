@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 
 
-JSON_CONTENT_TYPE = "application/javascript+json"
+JSON_CONTENT_TYPE = "text/javascript+json"
 CSS_CONTENT_TYPE = "text/css"
 
 
