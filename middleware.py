@@ -55,6 +55,7 @@ class CanonicalMiddleware:
                 redirect = True
             del view_kwargs['secure']
         
+        # i'd like this section to fucking appear in git
         host = request.META['SERVER_NAME']
         if 'host' in view_kwargs:
             if host != view_kwargs['host']:
