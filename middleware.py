@@ -86,6 +86,12 @@ class CanonicalMiddleware:
                 path = view_kwargs['path']
             del view_kwargs['path']
         
+        # handle slashes
+        path_ends_with_slash = path.endswith(u'/')
+        strip_trailing_slash = hasattr(settings, 'STRIP_TRAILING_SLASH') and settings.STRIP_TRAILING_SLASH
+        if strip_trailing_slash and path_ends_with_slash and path != u'/':
+            path = path[:-1]
+        
         # auto view
         else:
             try:
@@ -93,10 +99,10 @@ class CanonicalMiddleware:
             except (TemplateDoesNotExist, UnicodeError):
                 try:
                     view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + u'/' + INDEX_TEMPLATE)
-                    if not path.endswith(u'/'):
+                    if not strip_trailing_slash and not path_ends_with_slash:
                         path += '/'
                 except (TemplateDoesNotExist, UnicodeError):
-                    if not path.endswith(u'/'):
+                    if not strip_trailing_slash and not path_ends_with_slash:
                         if view_func == self._get_view_func(path + u'/'):
                             path += u'/'
         
