@@ -10,7 +10,7 @@ from time import sleep
 from random import randint
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, Http404
-from django.core.urlresolvers import resolve
+from django.core.urlresolvers import resolve, set_script_prefix
 from django.template import loader, TemplateDoesNotExist
 from nbio.django.shortcuts import build_url
 
@@ -39,6 +39,9 @@ class CanonicalMiddleware:
         add trailing slash (if required)
         """
         increment()
+        
+        # set script prefix
+        set_script_prefix(request.build_absolute_uri('/'))
         
         # test slow ajax
         #sleep(randint(0, 4))
