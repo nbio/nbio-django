@@ -16,10 +16,10 @@ from nbio.django.shortcuts import build_url
 
 
 TEMPLATE_PATH = u'auto'
-INDEX_TEMPLATE = u'__index__.html'
 RE_SLASHES = re.compile(r'/+')
 RE_START_SLASH = re.compile(r'^/+')
 RE_END_SLASH = re.compile(r'(?<=.)/$')
+RE_END_HTML = re.compile(r'\.html$')
 
 
 request_counter = 0
@@ -79,9 +79,13 @@ class CanonicalMiddleware:
                 port = view_kwargs['port']
                 redirect = True
             del view_kwargs['port']
-        
-        # clean up path
+                
+        # handle slashes
         path = RE_SLASHES.sub(u'/', unicode(request.path))
+        path_ends_with_slash = path.endswith(u'/')
+        strip_trailing_slash = hasattr(settings, 'STRIP_TRAILING_SLASH') and settings.STRIP_TRAILING_SLASH
+        if strip_trailing_slash and path_ends_with_slash and path != u'/':
+            path = path[:-1]
         
         # redirect to specific path
         if 'path' in view_kwargs:
@@ -89,25 +93,24 @@ class CanonicalMiddleware:
                 path = view_kwargs['path']
             del view_kwargs['path']
         
-        # handle slashes
-        path_ends_with_slash = path.endswith(u'/')
-        strip_trailing_slash = hasattr(settings, 'STRIP_TRAILING_SLASH') and settings.STRIP_TRAILING_SLASH
-        if strip_trailing_slash and path_ends_with_slash and path != u'/':
-            path = path[:-1]
-        
         # auto view
         else:
+            template_base = TEMPLATE_PATH + path
+            
             try:
-                view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path)
+                view_kwargs['template'] = loader.get_template(template_base)
             except (TemplateDoesNotExist, UnicodeError):
                 try:
-                    view_kwargs['template'] = loader.get_template(TEMPLATE_PATH + path + u'/' + INDEX_TEMPLATE)
+                    view_kwargs['template'] = loader.select_template((template_base + u'.html', template_base + u'/__index__.html'))
                     if not strip_trailing_slash and not path_ends_with_slash:
                         path += '/'
                 except (TemplateDoesNotExist, UnicodeError):
                     if not strip_trailing_slash and not path_ends_with_slash:
                         if view_func == self._get_view_func(path + u'/'):
                             path += u'/'
+            
+            if view_kwargs.get('template'):
+                path = RE_END_HTML.sub(u'', path)
         
         # redirect if path has changed
         if path != request.path:
