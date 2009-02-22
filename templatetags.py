@@ -29,6 +29,8 @@ def static_url(parser, token):
     try:
         path = ''
         tag_name, path = token.split_contents()
+        if hasattr(settings, 'STATIC_PREFIX'):
+            path = settings.STATIC_PREFIX + path
     except ValueError:
         pass
     return UrlNode(host=settings.HOSTS['static'], path=path, allow_override=True)
