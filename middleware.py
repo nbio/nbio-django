@@ -83,8 +83,8 @@ class CanonicalMiddleware:
         # handle slashes
         path = RE_SLASHES.sub(u'/', unicode(request.path))
         path_ends_with_slash = path.endswith(u'/')
-        strip_trailing_slash = hasattr(settings, 'STRIP_TRAILING_SLASH') and settings.STRIP_TRAILING_SLASH
-        if strip_trailing_slash and path_ends_with_slash and path != u'/':
+        append_slash = hasattr(settings, 'APPEND_SLASH') and settings.APPEND_SLASH
+        if not append_slash and path_ends_with_slash and path != u'/':
             path = path[:-1]
         
         # redirect to specific path
@@ -102,10 +102,10 @@ class CanonicalMiddleware:
             except (TemplateDoesNotExist, UnicodeError):
                 try:
                     view_kwargs['template'] = loader.select_template((template_base + u'.html', template_base + u'/__index__.html'))
-                    if not strip_trailing_slash and not path_ends_with_slash:
+                    if append_slash and not path_ends_with_slash:
                         path += '/'
                 except (TemplateDoesNotExist, UnicodeError):
-                    if not strip_trailing_slash and not path_ends_with_slash:
+                    if append_slash and not path_ends_with_slash:
                         if view_func == self._get_view_func(path + u'/'):
                             path += u'/'
             
