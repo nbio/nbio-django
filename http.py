@@ -19,7 +19,10 @@ class JSONHttpResponse(HttpResponse):
 
 class CSSHttpResponse(HttpResponse):
     def __init__(self, content):
-        import csshttprequest
+        try:
+            import csshttprequest.csshttprequest as csshttprequest
+        except:
+            import csshttprequest
         super(CSSHttpResponse, self).__init__(csshttprequest.encode(content), CSS_CONTENT_TYPE)
 
 
