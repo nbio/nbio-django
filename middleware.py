@@ -101,7 +101,7 @@ class CanonicalMiddleware:
                 view_kwargs['template'] = loader.get_template(template_base)
             except (TemplateDoesNotExist, UnicodeError):
                 try:
-                    view_kwargs['template'] = loader.select_template((template_base + u'.html', template_base + u'/__index__.html'))
+                    view_kwargs['template'] = loader.select_template((template_base + u'.html', template_base + u'/index.html'))
                     if append_slash and not path_ends_with_slash:
                         path += '/'
                 except (TemplateDoesNotExist, UnicodeError):
