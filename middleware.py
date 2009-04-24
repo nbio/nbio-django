@@ -60,7 +60,7 @@ class CanonicalMiddleware:
             del view_kwargs['secure']
         
         host = request.META['SERVER_NAME']
-        if hasattr(settings, 'STRIP_WWW'):
+        if hasattr(settings, 'STRIP_WWW') and settings.STRIP_WWW:
             host2 = RE_START_WWW.sub('', host)
             if host2 != host:
                 host = host2
