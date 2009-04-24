@@ -18,6 +18,7 @@ from nbio.django.shortcuts import build_url
 TEMPLATE_PATH = u'auto'
 RE_SLASHES = re.compile(r'/+')
 RE_START_SLASH = re.compile(r'^/+')
+RE_START_WWW = re.compile(r'^www\.')
 RE_END_SLASH = re.compile(r'(?<=.)/$')
 RE_END_HTML = re.compile(r'\.html$')
 
@@ -59,6 +60,11 @@ class CanonicalMiddleware:
             del view_kwargs['secure']
         
         host = request.META['SERVER_NAME']
+        if hasattr(settings, 'STRIP_WWW'):
+            host2 = RE_START_WWW.sub('', host)
+            if host2 != host:
+                host = host2
+                redirect = True
         if 'host' in view_kwargs:
             if host != view_kwargs['host']:
                 change = True
@@ -68,6 +74,8 @@ class CanonicalMiddleware:
                             change = False
                             request.META['X_OVERRIDE_SERVER_NAME'] = host
                             break
+                if hasattr(settings, 'HOST_SUFFIX'):
+                    request.META['X_IMPLICIT_SERVER_NAME'] = host.rsplit(settings.HOST_SUFFIX)[0]
                 if change:
                     host = view_kwargs['host']
                     redirect = True
