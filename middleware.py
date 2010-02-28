@@ -74,7 +74,7 @@ class CanonicalMiddleware:
                             change = False
                             request.META['X_OVERRIDE_SERVER_NAME'] = host
                             break
-                if hasattr(settings, 'HOST_SUFFIX'):
+                if hasattr(settings, 'HOST_SUFFIX') and len(settings.HOST_SUFFIX) > 0:
                     request.META['X_IMPLICIT_SERVER_NAME'] = host.rsplit(settings.HOST_SUFFIX)[0]
                 if change:
                     host = view_kwargs['host']
