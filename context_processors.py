@@ -9,8 +9,8 @@ import nbio.django.middleware
 
 
 def settings(request):
-    return {
-        'now': datetime.datetime.now(),
-        'settings': django.conf.settings,
-        'request_counter': nbio.django.middleware.request_counter
-    }
+  return {
+    'now': datetime.datetime.now(),
+    'settings': django.conf.settings,
+    'request_counter': nbio.django.middleware.request_counter
+  }

@@ -11,22 +11,22 @@ DEFAULT_CONTENT_TYPE = 'text/html'
 
 
 def null():
-    return
-    
+  return
+  
 
 def auto(request, **kwargs):
-    try:
-        t = kwargs['template']
-    except KeyError:
-        raise http.Http404
-    return render_response(request, t)
+  try:
+    t = kwargs['template']
+  except KeyError:
+    raise http.Http404
+  return render_response(request, t)
 
 
 def page_not_found(request, **kwargs):
-    t = kwargs.get('template', '404.html')
-    return render_response(request, t, response_class=http.HttpResponseNotFound)
+  t = kwargs.get('template', '404.html')
+  return render_response(request, t, response_class=http.HttpResponseNotFound)
 
 
 def server_error(request, **kwargs):
-    t = kwargs.get('template', '500.html')
-    return render_response(request, t, response_class=http.HttpResponseServerError)
+  t = kwargs.get('template', '500.html')
+  return render_response(request, t, response_class=http.HttpResponseServerError)
